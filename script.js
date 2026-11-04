@@ -1,4 +1,4 @@
-// Relógio (mantendo a lógica anterior)
+// Relógio em tempo real no topo da página
 function atualizarRelogio() {
     const agora = new Date();
     document.getElementById('relogio').innerText = `${agora.toLocaleDateString('pt-BR')} - ${agora.toLocaleTimeString('pt-BR')}`;
@@ -8,10 +8,8 @@ atualizarRelogio();
 
 // --- Lógica de Cadastro de Produtos ---
 
-// Array (lista) para salvar os produtos na memória do navegador
 const listaProdutos = [];
 
-// Mapeia os elementos do HTML
 const inputCliente = document.getElementById('nomeCliente');
 const inputProduto = document.getElementById('nomeProduto');
 const inputPreco = document.getElementById('precoProduto');
@@ -20,17 +18,17 @@ const corpoTabela = document.getElementById('corpoTabela');
 
 // Função para atualizar a tabela na tela
 function exibirProdutos() {
-    // Limpa a tabela antes de desenhar a lista atualizada
     corpoTabela.innerHTML = "";
 
-    // Passa por cada produto da lista e adiciona uma linha na tabela
     listaProdutos.forEach(item => {
         const linha = document.createElement('tr');
 
+        // Adicionada a célula ${item.dataCadastro} na estrutura da tabela
         linha.innerHTML = `
             <td>${item.cliente}</td>
             <td>${item.produto}</td>
             <td>R$ ${parseFloat(item.preco).toFixed(2)}</td>
+            <td>${item.dataCadastro}</td> 
         `;
 
         corpoTabela.appendChild(linha);
@@ -39,31 +37,32 @@ function exibirProdutos() {
 
 // Função executada ao clicar em Salvar
 btnSalvar.addEventListener('click', function() {
-    // Captura os valores digitados
     const clienteVal = inputCliente.value.trim();
     const produtoVal = inputProduto.value.trim();
     const precoVal = inputPreco.value.trim();
 
-    // Validação simples para não salvar campos vazios
     if (clienteVal === "" || produtoVal === "" || precoVal === "") {
         alert("Por favor, preencha todos os campos!");
         return; 
     }
 
-    // Cria um objeto com os dados do novo produto
+    // 1. Captura o momento exato do clique
+    const momentoCadastro = new Date();
+    
+    // 2. Formata a data e hora para o padrão brasileiro
+    const dataHoraFormatada = `${momentoCadastro.toLocaleDateString('pt-BR')} ${momentoCadastro.toLocaleTimeString('pt-BR')}`;
+
+    // 3. Cria o objeto incluindo a nova propriedade "dataCadastro"
     const novoProduto = {
         cliente: clienteVal,
         produto: produtoVal,
-        preco: precoVal
+        preco: precoVal,
+        dataCadastro: dataHoraFormatada // Salva a data/hora gerada no clique
     };
 
-    // Salva o objeto dentro do nosso Array
     listaProdutos.push(novoProduto);
-
-    // Atualiza a tabela visível na tela
     exibirProdutos();
 
-    // Limpa os campos do formulário para o próximo cadastro
     inputCliente.value = "";
     inputProduto.value = "";
     inputPreco.value = "";
